@@ -63,7 +63,8 @@ module IOStreams
                     compress: :zip,
                     compression: nil, # Deprecated
                     compress_level: 6,
-                    original_file_name: nil)
+                    original_file_name: nil,
+                    armor: false)
 
         raise(ArgumentError, "Requires either :recipient or :import_and_trust_key") unless recipient || import_and_trust_key
 
@@ -81,6 +82,7 @@ module IOStreams
 
         # Write to stdin, with encrypted contents being written to the file
         command = "#{IOStreams::Pgp.executable} --batch --no-tty --yes --encrypt"
+        command << " --armor" if armor
         command << " --sign --local-user \"#{signer}\"" if signer
         if signer_passphrase
           command << " --pinentry-mode loopback" if IOStreams::Pgp.pgp_version.to_f >= 2.1
